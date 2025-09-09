@@ -15,9 +15,10 @@
 
 int	main(int argc, char **argv)
 {
-	t_container container;
+	t_data data;
 
-	initialise_data(&container, argc, argv);
-	initialise_philos(&container);
+	initialise_data(&data, argc, argv);
+	initialise_philos(&data);
+	//cleanup(, SUCCESS, NULL);
 	return (0);
 }

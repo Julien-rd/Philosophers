@@ -12,17 +12,23 @@
 
 #include "philosophers.h"
 
+void wait_for_threads(t_philosopher *philo)
+{
+	while(philo->data->threads_ready == FALSE)
+		;
+}
+
 void	*routine(void *ptr)
 {
-	t_container *container;
+	t_philosopher *philo;
 
-	container = (t_container *)ptr;
-    // return NULL;
-	while (container->data.status == EVERYONE_ALIVE)
+	philo = (t_philosopher *)ptr;
+    wait_for_threads(philo);
+	while (philo->data->status == EVERYONE_ALIVE)
 	{
-		eat(container);
-		nap(container);
-		think(container);
+		eat(philo);
+		nap(philo);
+		think(philo);
 	}
 	return NULL;
 }

@@ -12,36 +12,45 @@
 
 #include "philosophers.h"
 
-void	optimised_usleep(size_t time, t_container *container)
+void	optimised_usleep(size_t time, t_philosopher *philo)
 {
 	size_t	end;
     size_t remaining;
 
     remaining = 1;
-	time *= 1000;
-    end = gettime(container) + time;
+    end = gettime(philo) + time;
     while(remaining > 0)
     {
-        remaining = end - gettime(container);
+        remaining = end - gettime(philo);
         if (remaining > 1000)
             usleep(remaining / 2);
     }
     
 }
-
-void	eat(t_container *container)
+int ready2eat(t_philosopher *philo)
 {
-	printf("%zu %d is eating\n", gettime(container), container->philo->id);
-	optimised_usleep(container->data.time_to_eat, container);
+    if (philo->right_fork == 1 && philo->left_fork == 1)
+        return 1;
+    return 0;
 }
 
-void	nap(t_container *container)
+void	eat(t_philosopher *philo)
 {
-	printf("%zu %d is sleeping\n", gettime(container), container->philo->id);
-	optimised_usleep(container->data.time_to_sleep, container);
+	printf("%zu %d is eating\n", gettime(philo), philo->id);
+    protected_pthread_mutex_unlock(philo->data->forks[philo->id % philo->data->number_of_philosophers], NULL);
+    protected_pthread_mutex_unlock(philo->data->forks[philo->id % philo->data->number_of_philosophers - 1], NULL);
+    philo->right_fork = 0;
+    philo->left_fork = 0;
+	optimised_usleep(philo->data->time_to_eat, philo);
 }
 
-void	think(t_container *container)
+void	nap(t_philosopher *philo)
 {
-	printf("%zu %d is thinking\n", gettime(container), container->philo->id);
+	printf("%zu %d is sleeping\n", gettime(philo), philo->id);
+	optimised_usleep(philo->data->time_to_sleep, philo);
+}
+
+void	think(t_philosopher *philo)
+{
+	printf("%zu %d is thinking\n", gettime(philo), philo->id);
 }

@@ -12,11 +12,12 @@
 
 #include "philosophers.h"
 
-size_t	gettime(t_container *container)
+size_t	gettime(t_philosopher *philo)
 {
 	struct timeval tv;
 
 	if (gettimeofday(&tv, NULL) == 0)
-		return ((tv.tv_sec * 1000 + tv.tv_sec / 1000) - container->data.start_time);
+		return ((tv.tv_sec * 1000 + tv.tv_sec / 1000) - philo->data->start_time);
+	//cleanup(); TODO
 	exit(1);
 }

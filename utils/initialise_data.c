@@ -43,39 +43,37 @@ static void	check_overflow(t_data *data)
 		|| data->number_of_times_each_philosopher_must_eat == -2)
 	{
 		printf("arg > int_max");
+		//cleanup() TODO
 		exit(1);
 	}
 }
-static void	initialise_forks(t_container *container)
+static void	initialise_forks(t_data *data)
 {
 	int	i;
 
 	i = 0;
-	while (i < container->data.number_of_philosophers)
+	while (i < data->number_of_philosophers)
 	{
-		pthread_mutex_init(&container->data.forks[i], NULL);
+		pthread_mutex_init(&data->forks[i], NULL);
 		i++;
 	}
 }
-void	initialise_data(t_container *container, int argc, char **argv)
+void	initialise_data(t_data *data, int argc, char **argv)
 {
-	t_philosopher	philo[200];
-	pthread_mutex_t	forks[200];
-
 	valid_input(argc, argv);
-	container->philo = philo;
-	container->data.forks = forks;
-	container->data.number_of_philosophers = ft_atoi(argv[1]);
-	container->data.time_to_die = ft_atoi(argv[2]);
-	container->data.time_to_eat = ft_atoi(argv[3]);
-	container->data.time_to_sleep = ft_atoi(argv[4]);
+	data->number_of_philosophers = ft_atoi(argv[1]);
+	data->time_to_die = ft_atoi(argv[2]);
+	data->time_to_eat = ft_atoi(argv[3]);
+	data->time_to_sleep = ft_atoi(argv[4]);
 	if (argc == 6)
-		container->data.number_of_times_each_philosopher_must_eat = ft_atoi(argv[5]);
+		data->number_of_times_each_philosopher_must_eat = ft_atoi(argv[5]);
 	else
-		container->data.number_of_times_each_philosopher_must_eat = -1;
-	check_overflow(&container->data);
-	container->data.status = EVERYONE_ALIVE;
-	container->data.start_time = 0;
-	container->data.start_time = gettime(container);
-	initialise_forks(container);
+		data->number_of_times_each_philosopher_must_eat = -1;
+	data->forks = (pthread_mutex_t *)protected_malloc(sizeof(pthread_mutex_t) * data->number_of_philosophers);
+	check_overflow(data);
+	data->status = EVERYONE_ALIVE;
+	data->threads_ready = FALSE;
+	protected_pthread_mutex_init(data->main_mutex, NULL);
+	data->start_time = 0;
+	initialise_forks(data);
 }

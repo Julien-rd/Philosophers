@@ -11,6 +11,8 @@ SOURCES = $(SRCDIR)/main.c \
           $(UTILDIR)/initialise_data.c \
           $(UTILDIR)/gettime.c \
           $(UTILDIR)/initialise_philos.c \
+          $(UTILDIR)/protected_functions.c \
+          $(UTILDIR)/cleanup.c \
           $(UTILDIR)/actions.c \
           $(UTILDIR)/routine.c 
 

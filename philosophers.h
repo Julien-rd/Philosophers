@@ -20,6 +20,10 @@
 # include <unistd.h>
 
 # define EVERYONE_ALIVE 1
+# define TRUE 1
+# define FALSE 0
+# define SUCCESS 1
+# define FAILURE 0
 
 typedef struct s_data
 {
@@ -29,7 +33,9 @@ typedef struct s_data
 	int				time_to_sleep;
 	int				number_of_times_each_philosopher_must_eat;
 	int				status;
+	int				threads_ready;
 	size_t			start_time;
+	pthread_mutex_t	main_mutex;
 	pthread_mutex_t	*forks;
 }					t_data;
 
@@ -39,6 +45,7 @@ typedef struct s_philosopher
 	int				right_fork;
 	int				left_fork;
 	int				life;
+	t_data			*data;
 	pthread_t		newthread;
 }					t_philosopher;
 
@@ -49,14 +56,27 @@ typedef struct s_container
 }					t_container;
 
 int					ft_atoi(const char *nptr);
-void				initialise_data(t_container *container, int argc,
+void				initialise_data(t_data *data, int argc,
 						char **argv);
-size_t				gettime(t_container *container);
-void				initialise_philos(t_container *container);
+size_t				gettime(t_philosopher *philo);
+void				initialise_philos(t_data *data);
 void				*routine(void *ptr);
-void				nap(t_container *container);
-void				eat(t_container *container);
-void				think(t_container *container);
-void				optimised_usleep(size_t time, t_container *container);
+void				optimised_usleep(size_t time, t_philosopher *philo);
+void				cleanup(t_philosopher *philo, int flag, char *msg);
+int					ready2eat(t_philosopher *philo);
+
+// actions
+void				nap(t_philosopher *philo);
+void				eat(t_philosopher *philo);
+void				think(t_philosopher *philo);
+
+//protected functions
+void *protected_malloc(size_t size);
+void protected_pthread_create(t_philosopher *philo, int pos);
+void protected_pthread_create(t_philosopher *philo, int pos);
+void protected_pthread_join(t_philosopher *philo, int pos);
+void protected_pthread_mutex_init(pthread_mutex_t	mutex, t_philosopher *philo);
+void protected_pthread_mutex_lock(pthread_mutex_t	mutex, t_philosopher *philo);
+void protected_pthread_mutex_unlock(pthread_mutex_t	mutex, t_philosopher *philo);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:21:37 by jromann           #+#    #+#             */
-/*   Updated: 2025/08/25 11:23:13 by jromann          ###   ########.fr       */
+/*   Updated: 2025/09/12 10:56:52 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,5 @@ void	ft_free_and_exit(t_philosopher **philo)
         i++;
     }
     free(philo);
-    exit(1);
+//     exit(1);
 }

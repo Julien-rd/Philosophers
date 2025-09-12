@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 13:52:18 by jromann           #+#    #+#             */
-/*   Updated: 2025/09/03 12:55:33 by jromann          ###   ########.fr       */
+/*   Updated: 2025/09/12 16:40:20 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static int	valid_input(int argc, char **argv)
 	if (argc < 5 || argc > 6)
 	{
 		printf("program requires 4 or 5 arguments");
-		exit(1);
+		return (1);
 	}
 	while (argv[++k])
 	{
@@ -30,37 +30,41 @@ static int	valid_input(int argc, char **argv)
 			if (argv[k][i] < '0' || argv[k][i] > '9')
 			{
 				printf("invalid input\n");
-				exit(1);
+				return (0);
 			}
 	}
 	return (1);
 }
 
-static void	check_overflow(t_data *data)
+static int	check_overflow(t_data *data)
 {
 	if (data->number_of_philosophers == -2 || data->time_to_die == -2
 		|| data->time_to_eat == -2 || data->time_to_sleep == -2
 		|| data->number_of_times_each_philosopher_must_eat == -2)
 	{
 		printf("arg > int_max");
-		//cleanup() TODO
-		exit(1);
+		// cleanup() TODO
+		return (1);
 	}
+	return (0);
 }
-static void	initialise_forks(t_data *data)
+static int	initialise_forks(t_data *data)
 {
 	int	i;
 
 	i = 0;
 	while (i < data->number_of_philosophers)
 	{
-		pthread_mutex_init(&data->forks[i], NULL);
+		if (protected_pthread_mutex_init(&data->forks[i], NULL) == 1)
+			return (1); // FREE MUTEX_INIT
 		i++;
 	}
+	return (0);
 }
-void	initialise_data(t_data *data, int argc, char **argv)
+int	initialise_data(t_data *data, int argc, char **argv)
 {
-	valid_input(argc, argv);
+	if (!valid_input(argc, argv))
+		return (1);
 	data->number_of_philosophers = ft_atoi(argv[1]);
 	data->time_to_die = ft_atoi(argv[2]);
 	data->time_to_eat = ft_atoi(argv[3]);
@@ -69,11 +73,21 @@ void	initialise_data(t_data *data, int argc, char **argv)
 		data->number_of_times_each_philosopher_must_eat = ft_atoi(argv[5]);
 	else
 		data->number_of_times_each_philosopher_must_eat = -1;
-	data->forks = (pthread_mutex_t *)protected_malloc(sizeof(pthread_mutex_t) * data->number_of_philosophers);
-	check_overflow(data);
+	if (check_overflow(data) == 1)
+		return (1);
+	data->forks = (pthread_mutex_t *)protected_malloc(sizeof(pthread_mutex_t)
+			* data->number_of_philosophers);
+	if (!data->forks)
+		return (1);
 	data->status = EVERYONE_ALIVE;
 	data->threads_ready = FALSE;
-	protected_pthread_mutex_init(data->main_mutex, NULL);
+	if (protected_pthread_mutex_init(&data->main_mutex, NULL) == 1)
+		return (1);
+	if (protected_pthread_mutex_init(&data->death_mutex, NULL) == 1)
+		return (1);
 	data->start_time = 0;
-	initialise_forks(data);
+	data->philos_done = 0;
+	if (initialise_forks(data) == 1)
+		return (1);
+	return (0);
 }

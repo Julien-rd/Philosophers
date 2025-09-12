@@ -13,6 +13,8 @@ SOURCES = $(SRCDIR)/main.c \
           $(UTILDIR)/initialise_philos.c \
           $(UTILDIR)/protected_functions.c \
           $(UTILDIR)/cleanup.c \
+          $(UTILDIR)/alive_check.c \
+          $(UTILDIR)/pickup_fork.c \
           $(UTILDIR)/actions.c \
           $(UTILDIR)/routine.c 
 

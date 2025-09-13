@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 08:36:17 by jromann           #+#    #+#             */
-/*   Updated: 2025/09/13 13:13:15 by jromann          ###   ########.fr       */
+/*   Updated: 2025/09/13 16:21:51 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	alive_check(t_philosopher *philo)
 	protected_pthread_mutex_lock(&philo->data->main_mutex, philo);
 	while (i < philo->data->number_of_philosophers)
 	{
-		if (time >= (size_t)(philo[i].last_eaten + philo->data->time_to_die))
+		if ((int)time - philo[i].last_eaten > philo->data->time_to_die)
 		{
 			// printaction("died", philo);
 			printf("%zu %d died\n", gettime(philo), philo->id);

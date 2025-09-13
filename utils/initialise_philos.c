@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:16:54 by jromann           #+#    #+#             */
-/*   Updated: 2025/09/13 15:59:00 by jromann          ###   ########.fr       */
+/*   Updated: 2025/09/13 16:20:18 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,9 @@ static int	forks_available(t_philosopher *philo, int id)
 		philo[id - 1].right_fork = 1;
 		philo[id - 1].left_fork = 1;
 		philo[id - 1].ready = 1;
+		// protected_pthread_mutex_lock(&philo[id - 1].data->forks[philo->id - 1], NULL);
+		// protected_pthread_mutex_lock(&philo[id - 1].data->forks[philo->id
+		// 	% philo->data->number_of_philosophers], NULL);
 		return (1);
 	}
 	return (0);
@@ -54,9 +57,9 @@ static int	forks_available(t_philosopher *philo, int id)
 void	nextinline(t_philosopher *philo)
 {
 	int	i;
-	int z;
+	int	z;
 	int	id;
-	int changes;
+	int	changes;
 
 	i = 0;
 	changes = 0;
@@ -67,7 +70,7 @@ void	nextinline(t_philosopher *philo)
 		z = 0;
 		if (forks_available(philo, id))
 		{
-			while(philo[z].id != id)
+			while (philo[z].id != id)
 				z++;
 			philo[z].ready = READY;
 			change_prio(philo, i, id);

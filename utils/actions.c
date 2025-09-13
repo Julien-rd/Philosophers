@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 12:45:41 by jromann           #+#    #+#             */
-/*   Updated: 2025/09/12 16:43:39 by jromann          ###   ########.fr       */
+/*   Updated: 2025/09/13 16:01:48 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,36 +44,35 @@ int	ready2eat(t_philosopher *philo)
 
 void	eat(t_philosopher *philo)
 {
-	// alive_check(philo, 0);
-	if (philo->id % 2 == 0)
-		pickup_fork(philo, RIGHT_FORK);
-	else
-		pickup_fork(philo, LEFT_FORK);
+	// if (philo->id % 2 == 0)
+	// 	pickup_fork(philo, RIGHT_FORK);
+	// else
+	// 	pickup_fork(philo, LEFT_FORK);
+	protected_pthread_mutex_lock(&philo->data->forks[philo->id - 1], NULL);
+	printaction("has taken a fork", philo);
+	protected_pthread_mutex_lock(&philo->data->forks[philo->id
+			% philo->data->number_of_philosophers], NULL);
+	printaction("has taken a fork", philo);
 	printaction("is eating", philo);
-	alive_check(philo, philo->data->time_to_eat);
 	optimised_usleep(philo->data->time_to_eat, philo);
 	philo->last_eaten = gettime(philo);
-	// alive_check(philo, 0);
 	philo->eaten_meals += 1;
-	alive_check(philo, philo->data->time_to_eat);
 	philo->right_fork = 0;
 	philo->left_fork = 0;
 	philo->time_alive = 0;
 	protected_pthread_mutex_unlock(&philo->data->forks[philo->id
 		% philo->data->number_of_philosophers], NULL);
 	protected_pthread_mutex_unlock(&philo->data->forks[philo->id - 1], NULL);
+	philo->ready = NOTREADY;
 }
 
 void	nap(t_philosopher *philo)
 {
-	alive_check(philo, 0);
 	printaction("is sleeping", philo);
-	alive_check(philo, philo->data->time_to_sleep);
 	optimised_usleep(philo->data->time_to_sleep, philo);
 }
 
 void	think(t_philosopher *philo)
 {
-	alive_check(philo, 0);
 	printaction("is thinking", philo);
 }

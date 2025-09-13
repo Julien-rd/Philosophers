@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 13:52:18 by jromann           #+#    #+#             */
-/*   Updated: 2025/09/12 16:40:20 by jromann          ###   ########.fr       */
+/*   Updated: 2025/09/13 13:50:19 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,17 @@ static int	initialise_forks(t_data *data)
 	}
 	return (0);
 }
+
+static int initialise_queue(t_data *data)
+{
+	int i;
+	
+	i = -1;
+	data->queue = (int *)protected_malloc(sizeof(int) * data->number_of_philosophers);
+	while(++i < data->number_of_philosophers)
+		data->queue[i] = i + 1;
+	return 0;
+}
 int	initialise_data(t_data *data, int argc, char **argv)
 {
 	if (!valid_input(argc, argv))
@@ -87,6 +98,7 @@ int	initialise_data(t_data *data, int argc, char **argv)
 		return (1);
 	data->start_time = 0;
 	data->philos_done = 0;
+	initialise_queue(data);
 	if (initialise_forks(data) == 1)
 		return (1);
 	return (0);

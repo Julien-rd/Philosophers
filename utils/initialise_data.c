@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 13:52:18 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/06 13:00:46 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 13:57:06 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,25 +30,42 @@ static int	valid_input(int argc, char **argv)
 	return (0);
 }
 
-static int	check_overflow(t_data *data)
-{
-	if (data->number_of_philosophers == -2 || data->time_to_die == -2
-		|| data->time_to_eat == -2 || data->time_to_sleep == -2
-		|| data->number_of_times_each_philosopher_must_eat == -2)
-		return (write(2, "ARG OVERFLOW\n", 13), 1);
-	return (0);
-}
 static int	initialise_forks(t_data *data)
 {
 	int	i;
 
 	i = 0;
-	while (i < data->number_of_philosophers)
+	data->forks = malloc(sizeof(pthread_mutex_t) * data->philo_amount);
+	if (!data->forks)
+		return (cleanup(NULL, data, FAILURE, "FORK FAILED\n"));
+	while (i < data->philo_amount)
 	{
-		if (protected_pthread_mutex_init(&data->forks[i], data, NULL) == 1)
+		if (pthread_mutex_init(&data->forks[i], NULL) != 0)
 			return (1);
 		i++;
 	}
+	return (0);
+}
+
+static int	initialise_args(t_data *data, int argc, char **argv)
+{
+	bool	overflow;
+
+	overflow = false;
+	data->philo_amount = ft_atoi(argv[1], &overflow);
+	data->time_to_die = ft_atoi(argv[2], &overflow);
+	data->time_to_eat = ft_atoi(argv[3], &overflow);
+	data->time_to_sleep = ft_atoi(argv[4], &overflow);
+	if (argc == 6)
+		data->required_meals = ft_atoi(argv[5], &overflow);
+	else
+		data->required_meals = -1;
+	if (overflow == true)
+		return (write(2, "OVERFLOW\n", 9), 1);
+	data->status = EVERYONE_ALIVE;
+	data->threads_ready = FALSE;
+	data->start_time = 0;
+	data->philos_done = 0;
 	return (0);
 }
 
@@ -56,27 +73,10 @@ int	initialise_data(t_data *data, int argc, char **argv)
 {
 	if (valid_input(argc, argv) == 1)
 		return (1);
-	data->number_of_philosophers = ft_atoi(argv[1]);
-	data->time_to_die = ft_atoi(argv[2]);
-	data->time_to_eat = ft_atoi(argv[3]);
-	data->time_to_sleep = ft_atoi(argv[4]);
-	if (argc == 6)
-		data->number_of_times_each_philosopher_must_eat = ft_atoi(argv[5]);
-	else
-		data->number_of_times_each_philosopher_must_eat = -1;
-	if (check_overflow(data) == 1)
+	if (initialise_args(data, argc, argv) == 1)
 		return (1);
-	data->forks = malloc(sizeof(pthread_mutex_t)
-			* data->number_of_philosophers);
-	if (!data->forks)
-		return (cleanup(NULL, data, FAILURE, "FORK FAILED\n"));
-	data->status = EVERYONE_ALIVE;
-	data->threads_ready = FALSE;
-	data->start_time = 0;
-	data->philos_done = 0;
-	// initialise_queue(data);
-	if (protected_pthread_mutex_init(&data->main_mutex, data, NULL) == 1)
-		return (1);
+	if (pthread_mutex_init(&data->main_mutex, NULL) != 0)
+		return (write(2, "PTHREAD_MUTEX_INIT FAILED\n", 26), 1);
 	if (initialise_forks(data) == 1)
 		return (1);
 	return (0);

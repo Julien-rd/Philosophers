@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 08:36:17 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 10:29:35 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 13:43:06 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	alive_check(t_philosopher *philo)
 
 	i = 0;
 	pthread_mutex_lock(&philo->data->main_mutex);
-	if (philo->data->philos_done == philo->data->number_of_philosophers)
+	if (philo->data->philos_done == philo->data->philo_amount)
 	{
 		philo->data->status = 0;
 		write(1, "dinner done!\n", 13);
@@ -43,7 +43,7 @@ void	alive_check(t_philosopher *philo)
 		pthread_mutex_unlock(&philo->data->main_mutex);
 		return ;
 	}
-	while (i < philo->data->number_of_philosophers)
+	while (i < philo->data->philo_amount)
 	{
 		time = gettime(philo);
 		if ((int)time - philo[i].last_eaten[0] > philo->data->time_to_die)

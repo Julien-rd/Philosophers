@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:08:16 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/06 13:29:07 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 13:53:54 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PHILOSOPHERS_H
 
 # include <pthread.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/time.h>
@@ -33,11 +34,11 @@
 
 typedef struct s_data
 {
-	int				number_of_philosophers;
+	int				philo_amount;
 	int				time_to_die;
 	int				time_to_eat;
 	int				time_to_sleep;
-	int				number_of_times_each_philosopher_must_eat;
+	int				required_meals;
 	int				status;
 	int				threads_ready;
 	int				philos_done;
@@ -80,12 +81,11 @@ void				printaction(char *str, t_philosopher *philo);
 // protected functions
 int					protected_pthread_create(t_philosopher *philo, t_data *data,
 						int pos);
-int					protected_pthread_mutex_init(pthread_mutex_t *mutex,
-						t_data *data, t_philosopher *philo);
+int					protected_pthread_mutex_init(pthread_mutex_t *mutex);
 
 // helper
 void				print_num(int n);
 size_t				ft_strlen(char *str);
-int					ft_atoi(const char *nptr);
+int					ft_atoi(const char *nptr, bool *overflow);
 
 #endif

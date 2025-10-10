@@ -5,7 +5,8 @@ int	cleanup(t_philosopher *philo, t_data *data, int flag, char *msg)
 	size_t iter;
 
 	iter = 0;
-	while (data->forks && (int)iter < data->number_of_philosophers)
+	pthread_mutex_destroy(&data->main_mutex);
+	while (data->forks && (int)iter < data->philo_amount)
 	{
 		pthread_mutex_destroy(&data->forks[iter]);
 		iter++;

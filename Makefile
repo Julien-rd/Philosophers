@@ -1,39 +1,40 @@
 NAME = philo
 
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -g -I. -Iprintf
+INC_DIR = .
+CFLAGS = -Wall -Wextra -Werror -I$(INC_DIR) -MMD -g
+OBJ_DIR = obj
+VPATH = utils utils/core utils/helpers
 
-SRCDIR = .
-UTILDIR = utils
+SRC = actions.c alive_check.c cleanup.c gettime.c helper.c initialise_data.c initialise_philos.c \
+      pickup_fork.c protected_functions.c routine.c main.c
 
-SOURCES = $(SRCDIR)/main.c \
-          $(UTILDIR)/ft_atoi.c \
-          $(UTILDIR)/initialise_data.c \
-          $(UTILDIR)/gettime.c \
-          $(UTILDIR)/initialise_philos.c \
-          $(UTILDIR)/protected_functions.c \
-          $(UTILDIR)/cleanup.c \
-          $(UTILDIR)/alive_check.c \
-          $(UTILDIR)/pickup_fork.c \
-          $(UTILDIR)/actions.c \
-          $(UTILDIR)/routine.c 
+OBJ = $(addprefix $(OBJ_DIR)/,$(SRC:.c=.o))
+DEP = $(OBJ:.o=.d)
 
-OBJECTS = $(SOURCES:.c=.o)
+.SILENT:
 
 all: $(NAME)
 
-$(NAME): $(OBJECTS)
-	$(CC) $(CFLAGS) $(OBJECTS) -o $(NAME)
+$(OBJ_DIR):
+	mkdir -p $(OBJ_DIR)
 
-%.o: %.c
+$(OBJ_DIR)/%.o: %.c | $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+# Linken
+$(NAME): $(OBJ)
+	$(CC) $(CFLAGS) $(OBJ) -o $(NAME)
+
 clean:
-	rm -f $(OBJECTS)
+	rm -f $(OBJ) $(DEP)
+	rm -rf $(OBJ_DIR)
 
 fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
 
-.PHONY: all clean fclean re test
+-include $(DEP)
+
+.PHONY: all clean fclean re

@@ -6,79 +6,35 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:16:54 by jromann           #+#    #+#             */
-/*   Updated: 2025/09/13 16:20:18 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/07 16:48:15 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-static void	change_prio(t_philosopher *philo, int pos, int id)
+void rotate(t_philosopher *philo)
 {
-	int	i;
+	size_t iter;
+	t_philosopher temp;
 
-	i = 0;
-	while (i < philo->data->number_of_philosophers)
+	iter = 0;
+	temp = philo[0];
+	while((int)iter < philo->data->number_of_philosophers - 1)
 	{
-		if (pos == i)
-		{
-			while (i + 1 < philo->data->number_of_philosophers)
-			{
-				philo->data->queue[i] = philo->data->queue[i + 1];
-				i++;
-			}
-			philo->data->queue[i] = id;
-			return ;
-		}
-		i++;
+		philo[iter] = philo[iter + 1];
+		iter++;
 	}
+	philo[iter] = temp;
 }
 
-static int	forks_available(t_philosopher *philo, int id)
-{
-	int	left_neighbor;
-	int	right_neighbor;
-
-	left_neighbor = ((id - 2 + philo->data->number_of_philosophers)
-			% philo->data->number_of_philosophers);
-	right_neighbor = (id % philo->data->number_of_philosophers);
-	if (philo[right_neighbor].left_fork != 1
-		&& philo[left_neighbor].right_fork != 1)
-	{
-		philo[id - 1].right_fork = 1;
-		philo[id - 1].left_fork = 1;
-		philo[id - 1].ready = 1;
-		// protected_pthread_mutex_lock(&philo[id - 1].data->forks[philo->id - 1], NULL);
-		// protected_pthread_mutex_lock(&philo[id - 1].data->forks[philo->id
-		// 	% philo->data->number_of_philosophers], NULL);
-		return (1);
-	}
-	return (0);
-}
 void	nextinline(t_philosopher *philo)
 {
-	int	i;
-	int	z;
-	int	id;
-	int	changes;
-
-	i = 0;
-	changes = 0;
-	protected_pthread_mutex_lock(&philo->data->main_mutex, philo);
-	while (i < philo->data->number_of_philosophers - changes)
-	{
-		id = philo->data->queue[i];
-		z = 0;
-		if (forks_available(philo, id))
-		{
-			while (philo[z].id != id)
-				z++;
-			philo[z].ready = READY;
-			change_prio(philo, i, id);
-			changes++;
-		}
-		i++;
-	}
-	protected_pthread_mutex_unlock(&philo->data->main_mutex, philo);
+	pthread_mutex_lock(&philo->data->main_mutex);
+	if	(philo[0].ready == READY)
+		return rotate(philo);
+	philo[0].ready = READY;
+	rotate(philo);
+	pthread_mutex_unlock(&philo->data->main_mutex);
 }
 
 int	initialise_philos(t_data *data)
@@ -87,10 +43,10 @@ int	initialise_philos(t_data *data)
 	t_philosopher	*philo;
 
 	i = 0;
-	philo = protected_malloc(sizeof(t_philosopher)
+	philo = malloc(sizeof(t_philosopher)
 			* data->number_of_philosophers);
 	if (!philo)
-		return (cleanup(philo, FAILURE, "MALLOC FAILED"));
+		return (cleanup(philo, philo->data, FAILURE, "MALLOC FAILED"));
 	while (i < data->number_of_philosophers)
 	{
 		philo[i].id = i + 1;
@@ -100,26 +56,26 @@ int	initialise_philos(t_data *data)
 		philo[i].data = data;
 		philo[i].time_alive = 0;
 		philo[i].eaten_meals = 0;
-		philo[i].last_eaten = 0;
+		philo[i].last_eaten[0] = 0;
 		philo[i].ready = NOTREADY;
-		protected_pthread_create(philo, i);
+		protected_pthread_create(philo, philo->data, i);
 		i++;
 	}
-	protected_pthread_mutex_lock(&data->main_mutex, NULL);
-	data->start_time = gettime(philo);
-	data->threads_ready = TRUE;
-	protected_pthread_mutex_unlock(&data->main_mutex, NULL);
-	while (data->status == EVERYONE_ALIVE)
+	if(data->status == EVERYONE_ALIVE)
 	{
-		nextinline(philo);
-		alive_check(philo);
-		// optimised_usleep(8, philo);
+		pthread_mutex_lock(&data->main_mutex);
+		data->start_time = gettime(philo);
+		data->threads_ready = TRUE;
+		pthread_mutex_unlock(&data->main_mutex);
+		while (data->status == EVERYONE_ALIVE)
+			alive_check(philo);
 	}
 	i = 0;
 	while (i < data->number_of_philosophers)
 	{
-		protected_pthread_join(philo, i);
+		pthread_join(philo[i].newthread, NULL);
 		i++;
 	}
+	cleanup(philo, data, SUCCESS, NULL);
 	return (0);
 }

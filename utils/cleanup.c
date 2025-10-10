@@ -1,13 +1,21 @@
 #include "philosophers.h"
 
-int	cleanup(t_philosopher *philo, int flag, char *msg)
+int	cleanup(t_philosopher *philo, t_data *data, int flag, char *msg)
 {
+	size_t iter;
+
+	iter = 0;
+	while (data->forks && (int)iter < data->number_of_philosophers)
+	{
+		pthread_mutex_destroy(&data->forks[iter]);
+		iter++;
+	}
+	if (data->forks)
+		free(data->forks);
 	if (philo)
 		free(philo);
-	if (philo->data->forks)
-		free(philo->data->forks);
 	if (msg != NULL)
-		printf("%s\n", msg);
+		write(2, msg, ft_strlen(msg));
 	if (flag == FAILURE)
 		return (1);
 	if (flag == SUCCESS)

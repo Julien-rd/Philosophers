@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 12:45:41 by jromann           #+#    #+#             */
-/*   Updated: 2025/09/13 16:20:09 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/06 13:27:38 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,9 +14,17 @@
 
 void	printaction(char *str, t_philosopher *philo)
 {
-	protected_pthread_mutex_lock(&philo->data->main_mutex, philo);
-	printf("%zu %d %s\n", gettime(philo), philo->id, str);
-	protected_pthread_mutex_unlock(&philo->data->main_mutex, philo);
+	if (philo->data->status == 0)
+		return ;
+	pthread_mutex_lock(&philo->data->main_mutex);
+	if (philo->data->status == EVERYONE_ALIVE)
+	{
+		print_num(gettime(philo));
+		write(1, " ", 1);
+		print_num(philo->id);
+		write(1, str, ft_strlen(str));
+	}
+	pthread_mutex_unlock(&philo->data->main_mutex);
 }
 
 void	optimised_usleep(size_t time, t_philosopher *philo)
@@ -44,35 +52,36 @@ int	ready2eat(t_philosopher *philo)
 
 void	eat(t_philosopher *philo)
 {
-	// if (philo->id % 2 == 0)
-	// 	pickup_fork(philo, RIGHT_FORK);
-	// else
-	// 	pickup_fork(philo, LEFT_FORK);
-	protected_pthread_mutex_lock(&philo->data->forks[philo->id - 1], NULL);
-	printaction("has taken a fork", philo);
-	protected_pthread_mutex_lock(&philo->data->forks[philo->id
-			% philo->data->number_of_philosophers], NULL);
-	printaction("has taken a fork", philo);
-	printaction("is eating", philo);
+	if (philo->id % 2 == 0)
+		pickup_fork(philo, RIGHT_FORK);
+	else
+		pickup_fork(philo, LEFT_FORK);
+	printaction(" is eating\n", philo);
+	philo->last_eaten[0] = gettime(philo);
+	if (philo->data->status == 0)
+		return ;
 	optimised_usleep(philo->data->time_to_eat, philo);
-	philo->last_eaten = gettime(philo);
 	philo->eaten_meals += 1;
+	if (philo->eaten_meals == philo->data->number_of_times_each_philosopher_must_eat)
+		philo->data->philos_done += 1;
 	philo->right_fork = 0;
 	philo->left_fork = 0;
 	philo->time_alive = 0;
-	protected_pthread_mutex_unlock(&philo->data->forks[philo->id
-		% philo->data->number_of_philosophers], NULL);
-	protected_pthread_mutex_unlock(&philo->data->forks[philo->id - 1], NULL);
+	pthread_mutex_unlock(&philo->data->forks[philo->id
+		% philo->data->number_of_philosophers]);
+	pthread_mutex_unlock(&philo->data->forks[philo->id - 1]);
 	philo->ready = NOTREADY;
 }
 
 void	nap(t_philosopher *philo)
 {
-	printaction("is sleeping", philo);
+	printaction(" is sleeping\n", philo);
+	if (philo->data->status == 0)
+		return ;
 	optimised_usleep(philo->data->time_to_sleep, philo);
 }
 
 void	think(t_philosopher *philo)
 {
-	printaction("is thinking", philo);
+	printaction(" is thinking\n", philo);
 }

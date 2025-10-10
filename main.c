@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 10:24:18 by jromann           #+#    #+#             */
-/*   Updated: 2025/09/12 13:39:36 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/06 11:31:36 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,5 @@ int	main(int argc, char **argv)
 		return (1);
 	if (initialise_philos(&data) == 1)
 		return (1);
-	// cleanup(, SUCCESS, NULL);
 	return (0);
 }

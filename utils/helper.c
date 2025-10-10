@@ -6,13 +6,13 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:27:48 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 13:43:31 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 15:35:50 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	print_num(int n)
+int	print_num(int n)
 {
 	char	buf[12];
 	int		i;
@@ -23,8 +23,7 @@ void	print_num(int n)
 	if (n == 0)
 	{
 		buf[i] = '0';
-		write(1, &buf[i], 1);
-		return ;
+		return (write(1, &buf[i], 1));
 	}
 	is_negative = (n < 0);
 	if (is_negative == 1)
@@ -36,7 +35,7 @@ void	print_num(int n)
 	}
 	if (is_negative)
 		buf[i--] = '-';
-	write(1, &buf[i + 1], 11 - i - 1);
+	return (write(1, &buf[i + 1], 11 - i - 1));
 }
 
 size_t	ft_strlen(char *str)
@@ -51,9 +50,9 @@ size_t	ft_strlen(char *str)
 
 int	ft_atoi(const char *nptr, bool *overflow)
 {
-	int i;
-	long int result;
-	int sign;
+	int			i;
+	long int	result;
+	int			sign;
 
 	i = 0;
 	result = 0;

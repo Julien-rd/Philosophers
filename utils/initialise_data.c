@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 13:52:18 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 13:57:06 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 15:28:27 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,17 +32,20 @@ static int	valid_input(int argc, char **argv)
 
 static int	initialise_forks(t_data *data)
 {
-	int	i;
+	size_t	iter;
 
-	i = 0;
+	iter = 0;
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->philo_amount);
 	if (!data->forks)
 		return (cleanup(NULL, data, FAILURE, "FORK FAILED\n"));
-	while (i < data->philo_amount)
+	while (iter < data->philo_amount)
 	{
-		if (pthread_mutex_init(&data->forks[i], NULL) != 0)
+		if (pthread_mutex_init(&data->forks[iter], NULL) != 0)
+		{
+			data->philo_amount = iter - 1;
 			return (1);
-		i++;
+		}
+		iter++;
 	}
 	return (0);
 }
@@ -62,10 +65,12 @@ static int	initialise_args(t_data *data, int argc, char **argv)
 		data->required_meals = -1;
 	if (overflow == true)
 		return (write(2, "OVERFLOW\n", 9), 1);
-	data->status = EVERYONE_ALIVE;
-	data->threads_ready = FALSE;
+	data->status = ACTIVE;
+	data->threads_ready = false;
 	data->start_time = 0;
 	data->philos_done = 0;
+	data->function_fail = false;
+	data->open_threads = 0;
 	return (0);
 }
 

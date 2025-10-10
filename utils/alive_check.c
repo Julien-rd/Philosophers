@@ -6,57 +6,45 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 08:36:17 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 13:43:06 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 15:08:10 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-// static int	philo_done(t_philosopher *philo)
-// {
-// 	if (philo->data->number_of_times_each_philosopher_must_eat == -1)
-// 		return (0);
-// 	if (philo->eaten_meals == philo->data->number_of_times_each_philosopher_must_eat)
-// 	{
-// 		philo->data->philos_done += 1;
-// 		if (philo->data->philos_done == philo->data->number_of_times_each_philosopher_must_eat)
-// 		{
-// 			printaction("Dinner done", philo);
-// 			exit(0);
-// 		}
-// 	}
-// 	return (0);
-// }
-
-void	alive_check(t_philosopher *philo)
+int	alive_check(t_philosopher *philo)
 {
-	int		i;
+	size_t	iter;
 	size_t	time;
 
-	i = 0;
+	iter = 0;
 	pthread_mutex_lock(&philo->data->main_mutex);
 	if (philo->data->philos_done == philo->data->philo_amount)
 	{
 		philo->data->status = 0;
-		write(1, "dinner done!\n", 13);
+		if (write(1, "dinner done!\n", 13) == -1)
+			return (pthread_mutex_unlock(&philo->data->main_mutex), 1);
 		philo->data->status = 0;
 		pthread_mutex_unlock(&philo->data->main_mutex);
-		return ;
+		return (0);
 	}
-	while (i < philo->data->philo_amount)
+	while (iter < philo->data->philo_amount)
 	{
 		time = gettime(philo);
-		if ((int)time - philo[i].last_eaten[0] > philo->data->time_to_die)
+		if (time - philo[iter].last_eaten > philo->data->time_to_die)
 		{
-			print_num(gettime(&philo[i]));
-			write(1, " ", 1);
-			print_num(philo[i].id);
-			write(1, " died\n", 6);
+			print_num(gettime(&philo[iter]));
+			if (write(1, " ", 1) == -1)
+				return (pthread_mutex_unlock(&philo->data->main_mutex), 1);
+			print_num(philo[iter].id);
+			if (write(1, " died\n", 6) == -1)
+				return (pthread_mutex_unlock(&philo->data->main_mutex), 1);
 			philo->data->status = 0;
 			pthread_mutex_unlock(&philo->data->main_mutex);
-			return ;
+			return (0);
 		}
-		i++;
+		iter++;
 	}
 	pthread_mutex_unlock(&philo->data->main_mutex);
+	return (0);
 }

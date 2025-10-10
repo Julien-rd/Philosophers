@@ -6,75 +6,75 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:16:54 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 13:44:23 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 15:33:32 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	rotate(t_philosopher *philo)
+static void	initialise_philos(t_data *data, t_philosopher **philo)
 {
-	size_t			iter;
-	t_philosopher	temp;
+	size_t	iter;
 
 	iter = 0;
-	temp = philo[0];
-	while ((int)iter < philo->data->philo_amount - 1)
+	*philo = malloc(sizeof(t_philosopher) * data->philo_amount);
+	if (!*philo)
+		return ;
+	while (iter < data->philo_amount)
 	{
-		philo[iter] = philo[iter + 1];
+		(*philo)[iter].id = iter + 1;
+		(*philo)[iter].life = 1;
+		(*philo)[iter].left_fork = 0;
+		(*philo)[iter].right_fork = 0;
+		(*philo)[iter].data = data;
+		(*philo)[iter].time_alive = 0;
+		(*philo)[iter].eaten_meals = 0;
+		(*philo)[iter].last_eaten = 0;
+		(*philo)[iter].ready = NOTREADY;
+		if (protected_pthread_create(*philo, iter) == 1)
+			break ;
 		iter++;
 	}
-	philo[iter] = temp;
+	data->open_threads = iter;
 }
 
-void	nextinline(t_philosopher *philo)
+static int	monitoring_philos(t_data *data, t_philosopher **philo)
 {
-	pthread_mutex_lock(&philo->data->main_mutex);
-	if (philo[0].ready == READY)
-		return (rotate(philo));
-	philo[0].ready = READY;
-	rotate(philo);
-	pthread_mutex_unlock(&philo->data->main_mutex);
-}
-
-int	initialise_philos(t_data *data)
-{
-	int				i;
-	t_philosopher	*philo;
-
-	i = 0;
-	philo = malloc(sizeof(t_philosopher) * data->philo_amount);
-	if (!philo)
-		return (cleanup(philo, philo->data, FAILURE, "MALLOC FAILED"));
-	while (i < data->philo_amount)
-	{
-		philo[i].id = i + 1;
-		philo[i].life = 1;
-		philo[i].left_fork = 0;
-		philo[i].right_fork = 0;
-		philo[i].data = data;
-		philo[i].time_alive = 0;
-		philo[i].eaten_meals = 0;
-		philo[i].last_eaten[0] = 0;
-		philo[i].ready = NOTREADY;
-		protected_pthread_create(philo, philo->data, i);
-		i++;
-	}
-	if (data->status == EVERYONE_ALIVE)
+	if (data->status == ACTIVE)
 	{
 		pthread_mutex_lock(&data->main_mutex);
-		data->start_time = gettime(philo);
-		data->threads_ready = TRUE;
+		data->start_time = gettime(*philo);
+		data->threads_ready = true;
 		pthread_mutex_unlock(&data->main_mutex);
-		while (data->status == EVERYONE_ALIVE)
-			alive_check(philo);
+		if (data->open_threads != data->philo_amount)
+			data->status = !ACTIVE;
+		while (data->status == ACTIVE)
+			if (alive_check(*philo) == 1)
+				return (data->status = !ACTIVE, 1);
 	}
-	i = 0;
-	while (i < data->philo_amount)
-	{
-		pthread_join(philo[i].newthread, NULL);
-		i++;
-	}
-	cleanup(philo, data, SUCCESS, NULL);
 	return (0);
+}
+
+static void	join_philos(t_data *data, t_philosopher **philo)
+{
+	size_t	iter;
+
+	iter = 0;
+	while (iter < data->open_threads)
+	{
+		pthread_join((*philo)[iter].newthread, NULL);
+		iter++;
+	}
+}
+
+int	start_simulation(t_data *data)
+{
+	t_philosopher	*philo;
+
+	initialise_philos(data, &philo);
+	if (philo == NULL)
+		return (cleanup(philo, data, FAILURE, NULL));
+	monitoring_philos(data, &philo);
+	join_philos(data, &philo);
+	return (cleanup(philo, data, SUCCESS, NULL));
 }

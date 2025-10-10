@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 12:45:41 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 11:03:20 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/06 13:27:38 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,18 +57,18 @@ void	eat(t_philosopher *philo)
 	else
 		pickup_fork(philo, LEFT_FORK);
 	printaction(" is eating\n", philo);
-	philo->last_eaten = gettime(philo);
+	philo->last_eaten[0] = gettime(philo);
 	if (philo->data->status == 0)
 		return ;
 	optimised_usleep(philo->data->time_to_eat, philo);
 	philo->eaten_meals += 1;
-	if (philo->eaten_meals == philo->data->meals_required)
+	if (philo->eaten_meals == philo->data->number_of_times_each_philosopher_must_eat)
 		philo->data->philos_done += 1;
 	philo->right_fork = 0;
 	philo->left_fork = 0;
 	philo->time_alive = 0;
 	pthread_mutex_unlock(&philo->data->forks[philo->id
-		% philo->data->philos_total]);
+		% philo->data->number_of_philosophers]);
 	pthread_mutex_unlock(&philo->data->forks[philo->id - 1]);
 	philo->ready = NOTREADY;
 }

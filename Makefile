@@ -7,7 +7,7 @@ OBJ_DIR = obj
 VPATH = utils utils/core utils/helpers
 
 SRC = actions.c alive_check.c cleanup.c gettime.c helper.c initialise_data.c initialise_philos.c \
-      pickup_fork.c protected_functions.c routine.c main.c
+      pickup_fork.c protected_functions.c routine.c philo.c
 
 OBJ = $(addprefix $(OBJ_DIR)/,$(SRC:.c=.o))
 DEP = $(OBJ:.o=.d)

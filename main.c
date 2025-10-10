@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 10:24:18 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/06 11:31:36 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 12:16:06 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ int	main(int argc, char **argv)
 
 	if (initialise_data(&data, argc, argv) == 1)
 		return (1);
-	if (initialise_philos(&data) == 1)
+	if (start_simulation(&data) == 1)
 		return (1);
 	return (0);
 }

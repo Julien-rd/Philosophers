@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:08:16 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/06 13:29:07 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 12:08:36 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PHILOSOPHERS_H
 
 # include <pthread.h>
+# include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <sys/time.h>
@@ -33,14 +34,14 @@
 
 typedef struct s_data
 {
-	int				number_of_philosophers;
-	int				time_to_die;
-	int				time_to_eat;
-	int				time_to_sleep;
-	int				number_of_times_each_philosopher_must_eat;
-	int				status;
-	int				threads_ready;
-	int				philos_done;
+	size_t			philos_total;
+	size_t			time_to_die;
+	size_t			time_to_eat;
+	size_t			time_to_sleep;
+	size_t			meals_required;
+	size_t			philos_done;
+	bool			status;
+	bool			threads_ready;
 	size_t			start_time;
 	pthread_mutex_t	main_mutex;
 	pthread_mutex_t	*forks;
@@ -48,20 +49,20 @@ typedef struct s_data
 
 typedef struct s_philosopher
 {
-	int				id;
-	int				right_fork;
-	int				left_fork;
-	int				life;
-	int				ready;
-	int				time_alive;
-	int				last_eaten[1];
-	int				eaten_meals;
+	size_t			id;
+	bool			right_fork;
+	bool			left_fork;
+	bool			life;
+	bool			ready;
+	size_t			time_alive;
+	size_t			last_eaten;
+	size_t			eaten_meals;
 	t_data			*data;
 	pthread_t		newthread;
 }					t_philosopher;
 
 int					initialise_data(t_data *data, int argc, char **argv);
-int					initialise_philos(t_data *data);
+int					start_simulation(t_data *data);
 int					cleanup(t_philosopher *philo, t_data *data, int flag,
 						char *msg);
 size_t				gettime(t_philosopher *philo);
@@ -86,6 +87,6 @@ int					protected_pthread_mutex_init(pthread_mutex_t *mutex,
 // helper
 void				print_num(int n);
 size_t				ft_strlen(char *str);
-int					ft_atoi(const char *nptr);
+int					ft_atoi(const char *nptr, bool *overflow);
 
 #endif

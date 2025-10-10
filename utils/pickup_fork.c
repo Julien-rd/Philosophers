@@ -15,7 +15,7 @@ void	pickup_fork(t_philosopher *philo, int flag)
 	if (flag == RIGHT_FORK)
 	{
 		pthread_mutex_lock(&philo->data->forks[philo->id
-			% philo->data->number_of_philosophers]);
+			% philo->data->philos_total]);
 		printaction(" has taken a fork\n", philo);
 		philo->right_fork = 1;
 		if (ready2eat(philo))

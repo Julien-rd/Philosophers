@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:27:48 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/06 13:44:11 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 10:59:42 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ size_t	ft_strlen(char *str)
 	return (iter);
 }
 
-int	ft_atoi(const char *nptr)
+int	ft_atoi(const char *nptr, bool *overflow)
 {
 	int			i;
 	long int	result;
@@ -68,7 +68,7 @@ int	ft_atoi(const char *nptr)
 	}
 	while (nptr[i] >= '0' && nptr[i] <= '9')
 		result = result * 10 + (nptr[i++] - '0');
-	if (result > 2147483647)
-		return (-2);
+	if (result > 2147483647 || (result > 2147483648 && sign == '-'))
+		return (*overflow = true);
 	return (result * sign);
 }

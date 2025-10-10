@@ -6,30 +6,35 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 12:45:41 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 15:45:53 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 15:57:16 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int	printaction(char *str, t_philosopher *philo)
+void	printaction(char *str, t_philosopher *philo)
 {
 	if (philo->data->status == 0)
-		return (0);
+		return ;
 	pthread_mutex_lock(&philo->data->main_mutex);
 	if (philo->data->status == ACTIVE)
 	{
 		print_num(gettime(philo));
 		if (write(1, " ", 1) == -1)
-			return (philo->data->function_fail = true,
-				pthread_mutex_unlock(&philo->data->main_mutex), 1);
+		{
+			philo->data->function_fail = true;
+			pthread_mutex_unlock(&philo->data->main_mutex);
+			return ;
+		}
 		print_num(philo->id);
 		if (write(1, str, ft_strlen(str)) == -1)
-			return (philo->data->function_fail = true,
-				pthread_mutex_unlock(&philo->data->main_mutex), 1);
+		{
+			philo->data->function_fail = true;
+			pthread_mutex_unlock(&philo->data->main_mutex);
+			return ;
+		}
 	}
 	pthread_mutex_unlock(&philo->data->main_mutex);
-	return (pthread_mutex_unlock(&philo->data->main_mutex), 0);
 }
 
 void	optimised_usleep(size_t time, t_philosopher *philo)
@@ -70,8 +75,10 @@ void	eat(t_philosopher *philo)
 		return ;
 	optimised_usleep(philo->data->time_to_eat, philo);
 	philo->eaten_meals += 1;
+	pthread_mutex_lock(&philo->data->main_mutex);
 	if (philo->eaten_meals == philo->data->required_meals)
 		philo->data->philos_done += 1;
+	pthread_mutex_unlock(&philo->data->main_mutex);
 	philo->right_fork = 0;
 	philo->left_fork = 0;
 	philo->time_alive = 0;

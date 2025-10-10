@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:16:54 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 15:33:32 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 16:09:59 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,36 @@ static void	join_philos(t_data *data, t_philosopher **philo)
 	}
 }
 
+static int	one_philo(t_data *data)
+{
+	t_philosopher	philo;
+
+	philo.data = data;
+	if (data->philo_amount > 1)
+		return (0);
+	data->start_time = gettime(&philo);
+	print_num(gettime(&philo));
+	if (write(1, " 1 has picked up a fork\n", 24) == -1)
+	{
+		data->function_fail = true;
+		return 1;
+	}
+	optimised_usleep(data->time_to_die, &philo);
+	print_num(gettime(&philo));
+	if (write(1, " 1 has died\n", 12) == -1)
+	{
+		data->function_fail = true;
+		return 1;
+	}
+	return (1);
+}
+
 int	start_simulation(t_data *data)
 {
 	t_philosopher	*philo;
 
+	if (one_philo(data))
+		return (cleanup(NULL, data, SUCCESS, NULL));
 	initialise_philos(data, &philo);
 	if (philo == NULL)
 		return (cleanup(philo, data, FAILURE, NULL));

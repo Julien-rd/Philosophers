@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:08:16 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 15:28:06 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/10 15:57:11 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int					alive_check(t_philosopher *philo);
 void				nap(t_philosopher *philo);
 void				eat(t_philosopher *philo);
 void				think(t_philosopher *philo);
-int					printaction(char *str, t_philosopher *philo);
+void				printaction(char *str, t_philosopher *philo);
 
 // protected functions
 int					protected_pthread_create(t_philosopher *philo, int pos);

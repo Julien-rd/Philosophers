@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:08:16 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 15:57:11 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/11 09:42:33 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void				*routine(void *ptr);
 void				optimised_usleep(size_t time, t_philosopher *philo);
 void				pickup_fork(t_philosopher *philo, int flag);
 int					ready2eat(t_philosopher *philo);
-int					alive_check(t_philosopher *philo);
+int					status_check(t_philosopher *philo);
 
 // actions
 void				nap(t_philosopher *philo);
@@ -85,8 +85,9 @@ void				printaction(char *str, t_philosopher *philo);
 int					protected_pthread_create(t_philosopher *philo, int pos);
 
 // helper
-int					print_num(int n);
+void				print_num(int n, t_data *data);
 size_t				ft_strlen(char *str);
 int					ft_atoi(const char *nptr, bool *overflow);
+int					safe_write(int fd, char *str, int size, t_data *data);
 
 #endif

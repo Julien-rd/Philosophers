@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:16:54 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 16:09:59 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/11 09:32:47 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,10 @@ static int	monitoring_philos(t_data *data, t_philosopher **philo)
 		if (data->open_threads != data->philo_amount)
 			data->status = !ACTIVE;
 		while (data->status == ACTIVE)
-			if (alive_check(*philo) == 1)
+		{
+			if (status_check(*philo) == 1)
 				return (data->status = !ACTIVE, 1);
+		}
 	}
 	return (0);
 }
@@ -75,18 +77,20 @@ static int	one_philo(t_data *data)
 	if (data->philo_amount > 1)
 		return (0);
 	data->start_time = gettime(&philo);
-	print_num(gettime(&philo));
+	print_num(gettime(&philo), data);
+	pthread_mutex_lock(&data->forks[0]);
 	if (write(1, " 1 has picked up a fork\n", 24) == -1)
 	{
 		data->function_fail = true;
-		return 1;
+		return (1);
 	}
 	optimised_usleep(data->time_to_die, &philo);
-	print_num(gettime(&philo));
+	print_num(gettime(&philo), data);
+	pthread_mutex_unlock(&data->forks[0]);
 	if (write(1, " 1 has died\n", 12) == -1)
 	{
 		data->function_fail = true;
-		return 1;
+		return (1);
 	}
 	return (1);
 }

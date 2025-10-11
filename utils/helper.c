@@ -6,13 +6,13 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:27:48 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 16:04:23 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/11 09:51:17 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int	print_num(int n)
+void	print_num(int n, t_data *data)
 {
 	char	buf[12];
 	int		i;
@@ -23,7 +23,8 @@ int	print_num(int n)
 	if (n == 0)
 	{
 		buf[i] = '0';
-		return (write(1, &buf[i], 1));
+		if (safe_write(1, &buf[i], 1, data) == -1)
+			return ;
 	}
 	is_negative = (n < 0);
 	if (is_negative == 1)
@@ -35,7 +36,8 @@ int	print_num(int n)
 	}
 	if (is_negative)
 		buf[i--] = '-';
-	return (write(1, &buf[i + 1], 11 - i - 1));
+	if (safe_write(1, &buf[i + 1], 11 - i - 1, data) == -1)
+		return ;
 }
 
 size_t	ft_strlen(char *str)
@@ -70,4 +72,31 @@ int	ft_atoi(const char *nptr, bool *overflow)
 	if (result > 2147483647 || (result > 2147483648 && sign == '-'))
 		return (*overflow = true, 0);
 	return (result * sign);
+}
+
+void	optimised_usleep(size_t time, t_philosopher *philo)
+{
+	size_t	end;
+	int		remaining;
+
+	if (time == 0)
+		return ;
+	remaining = 1;
+	end = gettime(philo) + time;
+	while (remaining > 0)
+	{
+		remaining = end - gettime(philo);
+		if (remaining > 1000 && usleep((remaining * 1000) / 2) == -1)
+		{
+			philo->data->function_fail = true;
+			return ;
+		}
+	}
+}
+
+int	ready2eat(t_philosopher *philo)
+{
+	if (philo->right_fork == 1 && philo->left_fork == 1)
+		return (1);
+	return (0);
 }

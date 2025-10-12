@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:08:16 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/11 09:42:33 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/11 10:31:23 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define PHILOSOPHERS_H
 
 # include <pthread.h>
+# include <stdatomic.h>
 # include <stdbool.h>
 # include <stdio.h>
 # include <stdlib.h>
@@ -32,31 +33,31 @@
 
 typedef struct s_data
 {
-	size_t			philo_amount;
-	size_t			time_to_die;
-	size_t			time_to_eat;
-	size_t			time_to_sleep;
-	size_t			required_meals;
-	size_t			philos_done;
-	size_t			start_time;
-	size_t			open_threads;
-	bool			status;
-	bool			threads_ready;
-	bool			function_fail;
+	atomic_size_t	philo_amount;
+	atomic_size_t	time_to_die;
+	atomic_size_t	time_to_eat;
+	atomic_size_t	time_to_sleep;
+	atomic_size_t	required_meals;
+	atomic_size_t	philos_done;
+	atomic_size_t	start_time;
+	atomic_size_t	open_threads;
+	atomic_bool		status;
+	atomic_bool		threads_ready;
+	atomic_bool		function_fail;
 	pthread_mutex_t	main_mutex;
 	pthread_mutex_t	*forks;
 }					t_data;
 
 typedef struct s_philosopher
 {
-	size_t			id;
-	bool			right_fork;
-	bool			left_fork;
-	bool			life;
-	bool			ready;
-	size_t			time_alive;
-	size_t			last_eaten;
-	size_t			eaten_meals;
+	atomic_size_t	id;
+	atomic_bool		right_fork;
+	atomic_bool		left_fork;
+	atomic_bool		life;
+	atomic_bool		ready;
+	atomic_size_t	time_alive;
+	atomic_size_t	last_eaten;
+	atomic_size_t	eaten_meals;
 	t_data			*data;
 	pthread_t		newthread;
 }					t_philosopher;

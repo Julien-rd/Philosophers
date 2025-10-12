@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 08:36:17 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/11 09:51:30 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/11 10:37:40 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,8 +53,7 @@ int	dinner_done(t_philosopher *philo)
 	if (philo->data->philos_done == philo->data->philo_amount)
 	{
 		philo->data->status = 0;
-		print_num(gettime(philo), philo->data);
-		if (write(1, "dinner done!\n", 13) == -1)
+		if (safe_write(1, "dinner done!\n", 13, philo->data) == -1)
 			return (1);
 		philo->data->status = 0;
 		return (1);

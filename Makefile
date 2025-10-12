@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -Werror -I$(INC_DIR) -MMD -g
 OBJ_DIR = obj
 VPATH = utils utils/core utils/helpers
 
-SRC = actions.c status_check.c cleanup.c gettime.c helper.c initialise_data.c initialise_philos.c \
+SRC = actions.c status_check.c cleanup.c gettime.c helper.c initialise_data.c start_simulation.c \
       pickup_fork.c protected_functions.c routine.c philo.c
 
 OBJ = $(addprefix $(OBJ_DIR)/,$(SRC:.c=.o))

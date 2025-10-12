@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   initialise_philos.c                                :+:      :+:    :+:   */
+/*   start_simulation.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:16:54 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/11 09:32:47 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/11 10:37:26 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,19 +79,13 @@ static int	one_philo(t_data *data)
 	data->start_time = gettime(&philo);
 	print_num(gettime(&philo), data);
 	pthread_mutex_lock(&data->forks[0]);
-	if (write(1, " 1 has picked up a fork\n", 24) == -1)
-	{
-		data->function_fail = true;
+	if (safe_write(1, " 1 has picked up a fork\n", 24, data) == -1)
 		return (1);
-	}
 	optimised_usleep(data->time_to_die, &philo);
 	print_num(gettime(&philo), data);
 	pthread_mutex_unlock(&data->forks[0]);
-	if (write(1, " 1 has died\n", 12) == -1)
-	{
-		data->function_fail = true;
+	if (safe_write(1, " 1 has died\n", 12, data) == -1)
 		return (1);
-	}
 	return (1);
 }
 

@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:16:54 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/11 10:37:26 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/13 13:42:01 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ static void	initialise_philos(t_data *data, t_philosopher **philo)
 	while (iter < data->philo_amount)
 	{
 		(*philo)[iter].id = iter + 1;
-		(*philo)[iter].life = 1;
 		(*philo)[iter].left_fork = 0;
 		(*philo)[iter].right_fork = 0;
 		(*philo)[iter].data = data;
@@ -47,11 +46,11 @@ static int	monitoring_philos(t_data *data, t_philosopher **philo)
 		data->threads_ready = true;
 		pthread_mutex_unlock(&data->main_mutex);
 		if (data->open_threads != data->philo_amount)
-			data->status = !ACTIVE;
+			data->status = INACTIVE;
 		while (data->status == ACTIVE)
 		{
 			if (status_check(*philo) == 1)
-				return (data->status = !ACTIVE, 1);
+				return (data->status = INACTIVE, 1);
 		}
 	}
 	return (0);

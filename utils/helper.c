@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:27:48 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/11 09:51:17 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/13 13:55:39 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,29 +14,28 @@
 
 void	print_num(int n, t_data *data)
 {
-	char	buf[12];
-	int		i;
-	int		is_negative;
+	char		buf[12];
+	int			i;
+	int			is_negative;
+	long long	k;
 
 	i = 11;
 	buf[i--] = '\0';
 	if (n == 0)
 	{
 		buf[i] = '0';
-		if (safe_write(1, &buf[i], 1, data) == -1)
+		if (write(1, &buf[i], 1) == -1)
 			return ;
 	}
-	is_negative = (n < 0);
-	if (is_negative == 1)
-		n = -n;
-	while (n > 0)
+	k = (-1 * (n < 0) + 1 * (n > 0)) * (long)n;
+	while (k > 0)
 	{
-		buf[i--] = '0' + (n % 10);
-		n /= 10;
+		buf[i--] = '0' + (k % 10);
+		k /= 10;
 	}
-	if (is_negative)
+	if (n < 0)
 		buf[i--] = '-';
-	if (safe_write(1, &buf[i + 1], 11 - i - 1, data) == -1)
+	if (write(1, &buf[i + 1], 11 - i - 1) == -1)
 		return ;
 }
 

@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:08:16 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/11 10:31:23 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/13 13:41:44 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <unistd.h>
 
 # define ACTIVE 1
+# define INACTIVE 0
 # define SUCCESS 1
 # define FAILURE 0
 # define RIGHT_FORK 0
@@ -53,7 +54,6 @@ typedef struct s_philosopher
 	atomic_size_t	id;
 	atomic_bool		right_fork;
 	atomic_bool		left_fork;
-	atomic_bool		life;
 	atomic_bool		ready;
 	atomic_size_t	time_alive;
 	atomic_size_t	last_eaten;

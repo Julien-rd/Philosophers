@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:27:48 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/13 13:55:39 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/13 15:12:17 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void	print_num(int n, t_data *data)
 	if (n == 0)
 	{
 		buf[i] = '0';
-		if (write(1, &buf[i], 1) == -1)
+		if (safe_write(1, &buf[i], 1, data) == -1)
 			return ;
 	}
 	k = (-1 * (n < 0) + 1 * (n > 0)) * (long)n;
@@ -35,7 +35,7 @@ void	print_num(int n, t_data *data)
 	}
 	if (n < 0)
 		buf[i--] = '-';
-	if (write(1, &buf[i + 1], 11 - i - 1) == -1)
+	if (safe_write(1, &buf[i + 1], 11 - i - 1, data) == -1)
 		return ;
 }
 

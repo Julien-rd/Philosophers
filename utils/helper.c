@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:27:48 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/13 15:12:17 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/14 13:01:12 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ void	print_num(int n, t_data *data)
 {
 	char		buf[12];
 	int			i;
-	int			is_negative;
 	long long	k;
 
 	i = 11;

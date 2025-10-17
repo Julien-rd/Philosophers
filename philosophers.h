@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/25 11:08:16 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/16 17:09:00 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/17 12:03:34 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,5 +93,6 @@ void				print_num(int n, t_data *data);
 size_t				ft_strlen(char *str);
 int					ft_atoi(const char *nptr, bool *overflow);
 int					safe_write(int fd, char *str, int size, t_data *data);
+void				safe_usleep(size_t time, t_philosopher *philo);
 
 #endif

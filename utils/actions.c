@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 12:45:41 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/16 16:55:10 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/17 12:09:17 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,7 @@ void	eat(t_philosopher *philo)
 	pthread_mutex_unlock(&philo->data->forks[philo->id
 		% philo->data->philo_amount]);
 	pthread_mutex_unlock(&philo->data->forks[philo->id - 1]);
-	if (usleep(0) == -1)
-		philo->data->function_fail = true;
+	safe_usleep(0, philo);
 	philo->ready = NOTREADY;
 }
 
@@ -63,6 +62,5 @@ void	nap(t_philosopher *philo)
 void	think(t_philosopher *philo)
 {
 	printaction(" is thinking\n", philo);
-	if (usleep(0) == -1)
-		philo->data->function_fail = true;
+	safe_usleep(0, philo);
 }

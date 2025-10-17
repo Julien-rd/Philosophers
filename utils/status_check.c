@@ -6,23 +6,11 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 08:36:17 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/16 17:19:09 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/17 12:03:43 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
-
-int	safe_write(int fd, char *str, int size, t_data *data)
-{
-	if (data->function_fail == true)
-		return (-1);
-	if (write(fd, str, size) == -1)
-	{
-		data->function_fail = true;
-		return (-1);
-	}
-	return (0);
-}
 
 static void	alive_check(t_philosopher *philo)
 {

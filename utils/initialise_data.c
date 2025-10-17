@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/01 13:52:18 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/10 15:28:27 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/16 17:18:58 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,14 @@ static int	initialise_forks(t_data *data)
 	return (0);
 }
 
+int	invalid_num(t_data *data)
+{
+	if (!data->philo_amount || !data->time_to_die || !data->time_to_eat
+		|| !data->time_to_eat || !data->time_to_sleep)
+		return (1);
+	return (0);
+}
+
 static int	initialise_args(t_data *data, int argc, char **argv)
 {
 	bool	overflow;
@@ -63,12 +71,14 @@ static int	initialise_args(t_data *data, int argc, char **argv)
 		data->required_meals = ft_atoi(argv[5], &overflow);
 	else
 		data->required_meals = -1;
-	if (overflow == true)
-		return (write(2, "OVERFLOW\n", 9), 1);
+	if (overflow == true || invalid_num(data))
+		return (write(2, "INVALID NUMBER\n", 15), 1);
 	data->status = ACTIVE;
 	data->threads_ready = false;
 	data->start_time = 0;
 	data->philos_done = 0;
+	if (data->required_meals == 0)
+		data->philos_done = data->philo_amount;
 	data->function_fail = false;
 	data->open_threads = 0;
 	return (0);

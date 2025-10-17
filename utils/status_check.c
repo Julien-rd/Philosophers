@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 08:36:17 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/11 10:37:40 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/16 17:19:09 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,11 +36,9 @@ static void	alive_check(t_philosopher *philo)
 		if (time - philo[iter].last_eaten > philo->data->time_to_die)
 		{
 			print_num(gettime(&philo[iter]), philo->data);
-			if (safe_write(1, " ", 1, philo->data) == -1)
-				return ;
+			safe_write(1, " ", 1, philo->data);
 			print_num(philo[iter].id, philo->data);
-			if (safe_write(1, " died\n", 6, philo->data) == -1)
-				return ;
+			safe_write(1, " died\n", 6, philo->data);
 			philo->data->status = 0;
 			return ;
 		}
@@ -53,18 +51,23 @@ int	dinner_done(t_philosopher *philo)
 	if (philo->data->philos_done == philo->data->philo_amount)
 	{
 		philo->data->status = 0;
-		if (safe_write(1, "dinner done!\n", 13, philo->data) == -1)
-			return (1);
-		philo->data->status = 0;
+		safe_write(1, "dinner done!\n", 13, philo->data);
 		return (1);
 	}
 	return (0);
 }
 
+int	function_failed(t_philosopher *philo)
+{
+	if (philo->data->function_fail)
+		philo->data->status = 0;
+	return (philo->data->function_fail);
+}
+
 int	status_check(t_philosopher *philo)
 {
 	pthread_mutex_lock(&philo->data->main_mutex);
-	if (!dinner_done(philo))
+	if (!function_failed(philo) && !dinner_done(philo))
 		alive_check(philo);
 	pthread_mutex_unlock(&philo->data->main_mutex);
 	return (0);

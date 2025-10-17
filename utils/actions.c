@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 12:45:41 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/13 15:14:41 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/16 16:55:10 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,10 +29,7 @@ void	printaction(char *str, t_philosopher *philo)
 
 void	eat(t_philosopher *philo)
 {
-	if (philo->id % 2 == 0)
-		pickup_fork(philo, RIGHT_FORK);
-	else
-		pickup_fork(philo, LEFT_FORK);
+	pickup_fork(philo);
 	printaction(" is eating\n", philo);
 	philo->last_eaten = gettime(philo);
 	if (philo->data->status == ACTIVE)

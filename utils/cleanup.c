@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/10 15:34:56 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/11 10:37:48 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/16 17:19:05 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ int	cleanup(t_philosopher *philo, t_data *data, int flag, char *msg)
 		free(philo);
 	if (msg != NULL)
 		safe_write(2, msg, ft_strlen(msg), data);
-	if (flag == FAILURE || data->open_threads != data->philo_amount
-		|| data->function_fail == true)
+	if (flag == FAILURE || (data->open_threads != data->philo_amount
+			&& data->philo_amount != 1) || data->function_fail == true)
 		return (1);
 	if (flag == SUCCESS)
 		return (0);

@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 13:27:48 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/16 16:47:11 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/17 12:19:08 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,7 @@ void	optimised_usleep(size_t time, t_philosopher *philo)
 	size_t	end;
 	int		remaining;
 
-	if (time == 0 || philo->data->function_fail == true)
+	if (time == 0 || philo->data->function_fail == true || philo->data->status == 0)
 		return ;
 	remaining = 1;
 	end = gettime(philo) + time;

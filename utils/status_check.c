@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/12 08:36:17 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/17 12:03:43 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/17 12:32:06 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ static void	alive_check(t_philosopher *philo)
 
 int	dinner_done(t_philosopher *philo)
 {
-	if (philo->data->philos_done == philo->data->philo_amount)
+	if (philo->data->philos_done >= philo->data->philo_amount)
 	{
 		philo->data->status = 0;
 		safe_write(1, "dinner done!\n", 13, philo->data);

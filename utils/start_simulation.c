@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 11:16:54 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/16 17:13:23 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/17 12:32:50 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ static int	monitoring_philos(t_data *data, t_philosopher **philo)
 		{
 			if (status_check(*philo) == 1)
 				return (data->status = INACTIVE, 1);
-			if (usleep(0) == -1)
+			if (usleep(100) == -1)
 				return (data->function_fail = true, data->status = INACTIVE, 1);
 		}
 	}

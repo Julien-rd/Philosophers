@@ -6,7 +6,7 @@
 /*   By: jromann <jromann@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/03 12:39:56 by jromann           #+#    #+#             */
-/*   Updated: 2025/10/17 12:06:39 by jromann          ###   ########.fr       */
+/*   Updated: 2025/10/17 12:11:07 by jromann          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	*routine(void *ptr)
 
 	philo = (t_philosopher *)ptr;
 	wait_for_threads(philo);
-	if (!(philo->data->philo_amount % 2 == 0 && philo->id % 2 == 0))
+	if (philo->data->philo_amount % 2 == 0 && philo->id % 2 == 0)
 		routine_for_even(philo);
 	while (philo->data->status == ACTIVE && philo->data->function_fail == false)
 	{
